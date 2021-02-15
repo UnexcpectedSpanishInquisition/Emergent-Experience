@@ -38,17 +38,36 @@ namespace Emergent_Experience.Modules
             
         }
 
+                [Command("+")]
+                public async Task Add(int goalxp, params string[] args)
+                {
+                    if(args.Length == 0 || !int.TryParse(args[0], out int number))
+                    {
+                        await ReplyAsync("You need to enter a number to add!");
+                        return;
+                    }
+                    goalxp += number;
+                    int goalmaxxp = await _servers.SetGoalXp(Context.Guild.Id);
+                    await _servers.AddGoalPoolXp(Context.Guild.Id, goalxp);
+                    await ReplyAsync($"Goals:{goalxp}/{goalmaxxp}");
+                }
         [Group(("EE"))]
         public class XpModule : ModuleBase<SocketCommandContext>
         {
             [Group(("Goal"))]
             public class GoalModule : ModuleBase<SocketCommandContext>
             {
-
                 private readonly Servers _servers;
                 public GoalModule(Servers servers)
                 {
                     _servers = servers;
+                }
+
+                [NamedArgumentType]
+                public class Integers
+                {
+                    public int First { get; set; }
+
                 }
 
                 [Command("=")]
@@ -59,17 +78,6 @@ namespace Emergent_Experience.Modules
                     await ReplyAsync($"Goals:{goalxp}/{goalmaxxp}");
                 }
 
-                [Command("+")]
-                public async Task Add(int goalxp)
-                {
-                    await Task.FromResult(addxp);
-                    int addxp 
-                    goalxp =  addxp;
-
-                    int goalmaxxp = await _servers.SetGoalXp(Context.Guild.Id);
-                    await _servers.AddGoalPoolXp(Context.Guild.Id, goalxp);
-                    await ReplyAsync($"Goals:{goalxp}/{goalmaxxp}");
-                }
             }
         }
 
